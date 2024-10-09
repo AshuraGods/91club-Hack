@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASHURA 2.0</title>
 
-    <!-- Google Fonts - Adding a stylish font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Poppins', sans-serif; /* Using the cool font */
+            font-family: 'Poppins', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -19,14 +18,14 @@
             margin: 0;
             position: relative;
             overflow: hidden;
-            background-color: #000; /* Black background */
-            color: #00ff00; /* Neon green text color */
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); /* Green glow effect */
+            background-color: #000;
+            color: #00ff00;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
         }
 
         h1 {
             margin: 20px 0;
-            font-weight: 700; /* Bold stylish header */
+            font-weight: 700;
         }
 
         #particle-container {
@@ -43,10 +42,10 @@
             font-size: 18px;
             margin-top: 10px;
             font-weight: 400;
-            background-color: #333; /* Dark background for input and button */
-            color: #00ff00; /* Green text for input and button */
-            border: 1px solid #00ff00; /* Green border for input and button */
-            border-radius: 10px; /* Rounded corners */
+            background-color: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            border-radius: 10px;
         }
 
         button {
@@ -57,15 +56,14 @@
         }
 
         button:hover {
-            background-color: #444; /* Darker background on hover */
+            background-color: #444;
         }
 
         button:active {
-            transform: scale(0.95); /* Cool click animation - scale down */
+            transform: scale(0.95);
             box-shadow: 0 2px 10px rgba(0, 255, 0, 0.8);
         }
 
-        /* Hacker effect animation */
         @keyframes flicker {
             0% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -102,7 +100,7 @@
     <div id="prediction">Next Prediction: <span id="prediction-text">N/A</span></div>
     <div id="period">Current Period: <span id="period-number">N/A</span></div>
 
-    <input type="number" id="initial-period" placeholder="Enter initial period number">
+    <input type="number" id="initial-period" placeholder="Enter initial period number" autocomplete="off">
     <button id="start-btn">Start Prediction</button>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -118,7 +116,7 @@
                     }
                 },
                 color: {
-                    value: "#00ff00" // Change to green for hacker theme
+                    value: "#00ff00"
                 },
                 shape: {
                     type: "circle",
@@ -153,7 +151,7 @@
                 line_linked: {
                     enable: true,
                     distance: 150,
-                    color: "#00ff00", // Change to green for hacker theme
+                    color: "#00ff00",
                     opacity: 0.4,
                     width: 1
                 },
@@ -215,46 +213,36 @@
 
         let currentPeriod = null;
 
-        // Function to generate the prediction
         function getPrediction() {
             return Math.random() < 0.6 ? "BIG" : "SMALL";
         }
 
-        // Function to update the prediction and period number
         function updatePrediction() {
-            if (currentPeriod === null) return; // No initial period entered
+            if (currentPeriod === null) return;
 
-            // Show loading animation
             document.getElementById("loading").style.display = "block";
 
-            // Simulate loading delay before showing prediction
             setTimeout(() => {
                 const prediction = getPrediction();
                 document.getElementById("prediction-text").textContent = prediction;
 
-                // Show the current period number first, then increment it for the next round
                 document.getElementById("period-number").textContent = currentPeriod;
 
-                // Increment the period AFTER showing the prediction
                 currentPeriod += 1;
 
-                // Hide loading animation
                 document.getElementById("loading").style.display = "none";
 
-                // Set a timeout to update every 60 seconds
                 setTimeout(updatePrediction, 60000);
-            }, 3000); // 3 seconds loading time
+            }, 3000);
         }
 
-        // Start button functionality
         document.getElementById("start-btn").addEventListener("click", function () {
             const initialPeriodInput = document.getElementById("initial-period").value;
 
             if (initialPeriodInput && !isNaN(initialPeriodInput)) {
-                currentPeriod = parseInt(initialPeriodInput); // Set the initial period
+                currentPeriod = parseInt(initialPeriodInput);
                 document.getElementById("period-number").textContent = currentPeriod;
 
-                // Start updating predictions after setting the first period manually
                 updatePrediction();
             } else {
                 alert("Please enter a valid period number.");
@@ -262,4 +250,4 @@
         });
     </script>
 </body>
-</html>
+</html>                        
