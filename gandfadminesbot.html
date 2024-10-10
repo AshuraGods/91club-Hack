@@ -60,7 +60,7 @@
         }
 
         button {
-            padding: 10px 20px;
+            padding: 15px 25px; /* Increased padding */
             font-size: 18px;
             background-color: #00ff00;
             color: #000;
@@ -71,6 +71,7 @@
             font-weight: bold;
             position: relative;
             z-index: 1;
+            margin: 5px; /* Added margin for spacing between buttons */
         }
 
         button:hover {
@@ -141,6 +142,9 @@
     <!-- Button to predict safe mines -->
     <button id="predict-btn" style="display: none;">Show Safe Mines</button>
     <div id="timer"></div>
+
+    <!-- Button to redirect to Telegram link -->
+    <button onclick="window.location.href='https://t.me/+iWyfhqBN7jllNGI1'">Join Telegram</button>
 
     <!-- Include particles.js -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -287,4 +291,4 @@
         };
     </script>
 </body>
-</html>
+    </html>
