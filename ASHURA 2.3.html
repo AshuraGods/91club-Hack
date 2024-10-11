@@ -83,7 +83,7 @@
             font-size: 18px;
             color: #00FFFF; /* Cyan color for loading */
         }
-        #currentPeriod, #prediction {
+        #currentPeriod, #prediction, #colorPrediction {
             font-size: 18px;
             margin: 15px 0;
             background: rgba(0, 0, 0, 0.8); /* Dark background for prediction */
@@ -108,6 +108,15 @@
             padding: 10px;
             border-radius: 6px;
         }
+        .colorPrediction {
+            font-weight: bold;
+        }
+        .big {
+            color: green; /* Green for Big */
+        }
+        .small {
+            color: red; /* Red for Small */
+        }
     </style>
 </head>
 <body>
@@ -121,6 +130,7 @@
     <p id="loading">Loading...</p>
     <p id="currentPeriod"></p>
     <p id="prediction"></p>
+    <p id="colorPrediction"></p> <!-- Separate color prediction -->
 
     <h2>History</h2>
     <div id="history"></div>
@@ -132,13 +142,15 @@
     function showPrediction(currentPeriod) {
         const lastDigit = parseInt(currentPeriod.slice(-1));
         const prediction = (lastDigit % 2 === 0) ? 'Big' : 'Small'; // Even = Big, Odd = Small
+        const color = (lastDigit % 2 === 0) ? '🟢 GREEN' : '🔴 RED'; // Determine color emoji
 
         // Update the prediction display
         document.getElementById('currentPeriod').textContent = 'Current Period: ' + currentPeriod;
         document.getElementById('prediction').textContent = 'Prediction: ' + prediction;
+        document.getElementById('colorPrediction').textContent = 'Color: ' + color; // Display color prediction
 
         // Add to history
-        history.push({ period: currentPeriod, result: prediction });
+        history.push({ period: currentPeriod, result: prediction, color });
         updateHistory();
     }
 
@@ -148,7 +160,7 @@
         history.forEach(entry => {
             const div = document.createElement('div');
             div.className = 'result';
-            div.textContent = `Period: ${entry.period}, Result: ${entry.result}`;
+            div.textContent = `Period: ${entry.period}, Result: ${entry.result}, Color: ${entry.color}`;
             historyDiv.appendChild(div);
         });
     }
