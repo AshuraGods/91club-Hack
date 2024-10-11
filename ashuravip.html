@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Style Login and ASHURA VIP</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: black;
+            color: lime;
+            font-family: 'VT323', monospace;
+            text-align: center;
+            text-shadow: 0 0 5px lime, 0 0 10px lime;
+        }
+        .login-container, .prediction-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Hide prediction container by default */
+        }
+        input {
+            padding: 10px;
+            margin: 5px;
+            border: 2px solid lime;
+            border-radius: 5px;
+            width: 200px;
+            background: black;
+            color: lime;
+            font-family: 'VT323', monospace;
+        }
+        button {
+            padding: 10px 20px;
+            border: 2px solid lime;
+            border-radius: 5px;
+            background-color: black;
+            color: lime;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button:hover {
+            background-color: lime;
+            color: black;
+        }
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .history {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid lime;
+            border-radius: 5px;
+        }
+        .loading {
+            display: none;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container" id="login-container">
+        <h1>HACKER LOGIN</h1>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="login()">ACCESS</button>
+    </div>
+
+    <div class="prediction-container" id="prediction-container">
+        <h1>ASHURA VIP</h1>
+        <input type="number" id="period" placeholder="Enter period (0-9)" min="0" max="9" required>
+        <button onclick="makePrediction()">PREDICT</button>
+        <div class="loading" id="loading">PREDICTING...</div>
+        <div class="result" id="result"></div>
+        <div class="history" id="history"></div>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        let lastPrediction = '';
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Wrap particles around canvas edges
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = 'lime';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Update these credentials
+            const correctUsername = "ASHURA";
+            const correctPassword = "VIP";
+
+            // Check for correct username and password
+            if (username === correctUsername && password === correctPassword) {
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('prediction-container').style.display = 'block';
+            } else {
+                alert('Invalid username or password. Please try again.');
+            }
+        }
+
+        function makePrediction() {
+            const periodInput = document.getElementById('period');
+            const period = parseInt(periodInput.value);
+            const loading = document.getElementById('loading');
+            const resultDiv = document.getElementById('result');
+            const historyDiv = document.getElementById('history');
+
+            // Clear previous result
+            resultDiv.textContent = '';
+            loading.style.display = 'none';
+
+            // Check for valid period
+            if (isNaN(period) || period < 0 || period > 9) {
+                alert("Please enter a valid period number between 0 and 9.");
+                return;
+            }
+
+            // Show loading
+            loading.style.display = 'block';
+
+            // Simulate loading
+            setTimeout(() => {
+                // Generate three random numbers and make prediction
+                const randomNumbers = [];
+                for (let i = 0; i < 3; i++) {
+                    randomNumbers.push(Math.floor(Math.random() * 10));
+                }
+                const prediction = randomNumbers.some(num => num >= 5) ? 'BIG' : 'SMALL';
+
+                // Display result
+                lastPrediction = `Prediction for period ${period}: ${prediction}, (${randomNumbers.join('), (')})`;
+                resultDiv.textContent = lastPrediction;
+                loading.style.display = 'none';
+
+                // Add to history
+                const historyEntry = document.createElement('div');
+                historyEntry.textContent = lastPrediction;
+                historyDiv.appendChild(historyEntry);
+
+                // Clear input
+                periodInput.value = '';
+            }, 2000); // Loading time (2 seconds)
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        initParticles();
+        animateParticles();
+        document.getElementById('login-container').style.display = 'block'; // Show login by default
+
+        // Allow replacing last result
+        document.getElementById('period').addEventListener('focus', () => {
+            if (lastPrediction) {
+                const lastPeriod = lastPrediction.match(/period (\d):/);
+                if (lastPeriod) {
+                    document.getElementById('period').value = lastPeriod[1];
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
