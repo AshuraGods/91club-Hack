@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASHURA 2.3 Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Courier New', monospace; /* Monospaced font for hacker style */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            background-color: black; /* Black background */
+            color: #00FF00; /* Green text color */
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 0, 0.7); /* Yellow particles */
+            pointer-events: none;
+            animation: float 3s infinite; /* Add float animation */
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px); /* Float up */
+            }
+            100% {
+                transform: translateY(0); /* Float down */
+            }
+        }
+        .container {
+            position: relative;
+            max-width: 500px;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.9); /* Dark background for the container */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            text-align: left;
+        }
+        h1 {
+            color: #00FF00; /* Green color for header */
+            margin-bottom: 20px;
+            font-size: 24px; /* Larger font size */
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 12px;
+            border: 1px solid #00FF00; /* Green border */
+            border-radius: 6px;
+            margin-bottom: 20px;
+            background: black; /* Input background */
+            color: #00FF00; /* Green text */
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00FF00; /* Green button */
+            color: black; /* Black text */
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #009900; /* Darker green on hover */
+        }
+        #loading {
+            display: none;
+            font-size: 18px;
+            color: #00FFFF; /* Cyan color for loading */
+        }
+        #currentPeriod, #prediction {
+            font-size: 18px;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.8); /* Dark background for prediction */
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #00FF00; /* Green border */
+        }
+        h2 {
+            margin-top: 30px;
+            color: #00FF00; /* Green color for history header */
+        }
+        #history {
+            margin-top: 10px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .result {
+            background: rgba(0, 0, 0, 0.8); /* Dark background for results */
+            border-left: 6px solid #00FF00; /* Green border */
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ASHURA 2.3 Prediction</h1>
+    <label for="periodInput">Enter Period Number:</label>
+    <input type="text" id="periodInput" placeholder="e.g., 20241011010735">
+    <button id="submitBtn">Submit</button>
+
+    <p id="loading">Loading...</p>
+    <p id="currentPeriod"></p>
+    <p id="prediction"></p>
+
+    <h2>History</h2>
+    <div id="history"></div>
+</div>
+
+<script>
+    let history = [];
+
+    function showPrediction(currentPeriod) {
+        const lastDigit = parseInt(currentPeriod.slice(-1));
+        const prediction = (lastDigit % 2 === 0) ? 'Big' : 'Small'; // Even = Big, Odd = Small
+
+        // Update the prediction display
+        document.getElementById('currentPeriod').textContent = 'Current Period: ' + currentPeriod;
+        document.getElementById('prediction').textContent = 'Prediction: ' + prediction;
+
+        // Add to history
+        history.push({ period: currentPeriod, result: prediction });
+        updateHistory();
+    }
+
+    function updateHistory() {
+        const historyDiv = document.getElementById('history');
+        historyDiv.innerHTML = ''; // Clear current history
+        history.forEach(entry => {
+            const div = document.createElement('div');
+            div.className = 'result';
+            div.textContent = `Period: ${entry.period}, Result: ${entry.result}`;
+            historyDiv.appendChild(div);
+        });
+    }
+
+    document.getElementById('submitBtn').addEventListener('click', function() {
+        const periodInput = document.getElementById('periodInput').value;
+        if (periodInput) {
+            document.getElementById('loading').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                showPrediction(periodInput);
+            }, 2000); // Simulate loading for 2 seconds
+
+            // Clear input
+            document.getElementById('periodInput').value = '';
+        }
+    });
+
+    // Particle Animation
+    function createParticles() {
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            document.body.appendChild(particle);
+            
+            const size = Math.random() * 10 + 5; // Random size between 5 and 15
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = Math.random() * window.innerHeight + 'px';
+            
+            // Remove particle after animation duration
+            setTimeout(() => {
+                particle.remove();
+            }, 3000); // Remove after 3 seconds
+        }
+    }
+
+    // Create particles every second
+    setInterval(createParticles, 1000);
+</script>
+
+</body>
+</html>
