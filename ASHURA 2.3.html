@@ -7,93 +7,95 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Courier New', monospace; /* Monospaced font for hacker style */
+            font-family: 'Courier New', monospace;
             margin: 0;
             padding: 0;
             overflow: hidden;
             position: relative;
             height: 100vh;
-            background-color: black; /* Black background */
-            color: #00FF00; /* Green text color */
+            background-color: black;
+            color: #00FF00;
         }
         .particle {
             position: absolute;
             border-radius: 50%;
-            background: rgba(255, 255, 0, 0.7); /* Yellow particles */
+            background: rgba(255, 255, 0, 0.7);
             pointer-events: none;
-            animation: float 3s infinite; /* Add float animation */
+            animation: float 3s infinite;
         }
         @keyframes float {
             0% {
                 transform: translateY(0);
             }
             50% {
-                transform: translateY(-20px); /* Float up */
+                transform: translateY(-20px);
             }
             100% {
-                transform: translateY(0); /* Float down */
+                transform: translateY(0);
             }
         }
         .container {
             position: relative;
             max-width: 500px;
             margin: auto;
-            background: rgba(0, 0, 0, 0.9); /* Dark background for the container */
+            background: rgba(0, 0, 0, 0.9);
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             z-index: 1;
             text-align: left;
+            display: none; /* Hide initially until logged in */
         }
         h1 {
-            color: #00FF00; /* Green color for header */
+            color: #00FF00;
             margin-bottom: 20px;
-            font-size: 24px; /* Larger font size */
+            font-size: 24px;
         }
         label {
             font-weight: bold;
             margin-bottom: 10px;
             display: block;
         }
-        input[type="text"] {
+        input[type="text"], input[type="password"] {
             width: calc(100% - 20px);
             padding: 12px;
-            border: 1px solid #00FF00; /* Green border */
+            border: 1px solid #00FF00;
             border-radius: 6px;
-            margin-bottom: 20px;
-            background: black; /* Input background */
-            color: #00FF00; /* Green text */
+            margin-bottom: 10px;
+            background: black;
+            color: #00FF00;
         }
         button {
             width: 100%;
             padding: 12px;
-            background-color: #00FF00; /* Green button */
-            color: black; /* Black text */
+            background-color: #00FF00;
+            color: black;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s;
+            margin-bottom: 10px;
         }
         button:hover {
-            background-color: #009900; /* Darker green on hover */
+            background-color: #009900;
         }
         #loading {
             display: none;
             font-size: 18px;
-            color: #00FFFF; /* Cyan color for loading */
+            color: #00FFFF;
         }
         #currentPeriod, #prediction, #colorPrediction {
             font-size: 18px;
             margin: 15px 0;
-            background: rgba(0, 0, 0, 0.8); /* Dark background for prediction */
+            background: rgba(0, 0, 0, 0.8);
             padding: 10px;
             border-radius: 6px;
-            border: 1px solid #00FF00; /* Green border */
+            border: 1px solid #00FF00;
         }
         h2 {
             margin-top: 30px;
-            color: #00FF00; /* Green color for history header */
+            color: #00FF00;
         }
         #history {
             margin-top: 10px;
@@ -102,8 +104,8 @@
             overflow-y: auto;
         }
         .result {
-            background: rgba(0, 0, 0, 0.8); /* Dark background for results */
-            border-left: 6px solid #00FF00; /* Green border */
+            background: rgba(0, 0, 0, 0.8);
+            border-left: 6px solid #00FF00;
             margin: 5px 0;
             padding: 10px;
             border-radius: 6px;
@@ -112,16 +114,42 @@
             font-weight: bold;
         }
         .big {
-            color: green; /* Green for Big */
+            color: green;
         }
         .small {
-            color: red; /* Red for Small */
+            color: red;
+        }
+        /* VIP Key Dialog Styles */
+        .vip-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00FF00;
+            border-radius: 12px;
+            padding: 20px;
+            z-index: 2;
+            display: none; /* Hide initially */
+        }
+        .vip-dialog h2 {
+            margin: 0 0 20px;
+            color: #00FF00;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- VIP Key Dialog -->
+<div class="vip-dialog" id="vipDialog">
+    <h2>Enter VIP Key</h2>
+    <input type="password" id="vipKeyInput" placeholder="Enter your VIP key">
+    <button id="vipSubmitBtn">Submit</button>
+    <button id="telegramButton" onclick="window.open('https://t.me/+iWyfhqBN7jllNGI1', '_blank');">Join Telegram Channel</button>
+    <p id="vipMessage" style="color: red; display: none;"></p>
+</div>
+
+<div class="container" id="predictionContainer">
     <h1>ASHURA 2.3 Prediction</h1>
     <label for="periodInput">Enter Period Number:</label>
     <input type="text" id="periodInput" placeholder="e.g., 20241011010735">
@@ -130,33 +158,33 @@
     <p id="loading">Loading...</p>
     <p id="currentPeriod"></p>
     <p id="prediction"></p>
-    <p id="colorPrediction"></p> <!-- Separate color prediction -->
+    <p id="colorPrediction"></p>
 
     <h2>History</h2>
     <div id="history"></div>
 </div>
 
 <script>
+    const correctVIPKey = "7898674523"; // Updated VIP key
     let history = [];
+    let isLoggedIn = false;
 
     function showPrediction(currentPeriod) {
         const lastDigit = parseInt(currentPeriod.slice(-1));
-        const prediction = (lastDigit % 2 === 0) ? 'Big' : 'Small'; // Even = Big, Odd = Small
-        const color = (lastDigit % 2 === 0) ? '🟢 GREEN' : '🔴 RED'; // Determine color emoji
+        const prediction = (lastDigit % 2 === 0) ? 'Big' : 'Small';
+        const color = (lastDigit % 2 === 0) ? '🟢 GREEN' : '🔴 RED';
 
-        // Update the prediction display
         document.getElementById('currentPeriod').textContent = 'Current Period: ' + currentPeriod;
         document.getElementById('prediction').textContent = 'Prediction: ' + prediction;
-        document.getElementById('colorPrediction').textContent = 'Color: ' + color; // Display color prediction
+        document.getElementById('colorPrediction').textContent = 'Color: ' + color;
 
-        // Add to history
         history.push({ period: currentPeriod, result: prediction, color });
         updateHistory();
     }
 
     function updateHistory() {
         const historyDiv = document.getElementById('history');
-        historyDiv.innerHTML = ''; // Clear current history
+        historyDiv.innerHTML = '';
         history.forEach(entry => {
             const div = document.createElement('div');
             div.className = 'result';
@@ -172,12 +200,27 @@
             setTimeout(() => {
                 document.getElementById('loading').style.display = 'none';
                 showPrediction(periodInput);
-            }, 2000); // Simulate loading for 2 seconds
-
-            // Clear input
+            }, 2000);
             document.getElementById('periodInput').value = '';
         }
     });
+
+    document.getElementById('vipSubmitBtn').addEventListener('click', function() {
+        const vipKey = document.getElementById('vipKeyInput').value;
+        if (vipKey === correctVIPKey) {
+            isLoggedIn = true;
+            document.getElementById('vipDialog').style.display = 'none';
+            document.getElementById('predictionContainer').style.display = 'block'; // Show prediction UI
+        } else {
+            document.getElementById('vipMessage').textContent = 'Incorrect VIP key. Please try again.';
+            document.getElementById('vipMessage').style.display = 'block';
+        }
+    });
+
+    // Show VIP dialog on load
+    window.onload = function() {
+        document.getElementById('vipDialog').style.display = 'block';
+    };
 
     // Particle Animation
     function createParticles() {
@@ -186,20 +229,18 @@
             particle.classList.add('particle');
             document.body.appendChild(particle);
             
-            const size = Math.random() * 10 + 5; // Random size between 5 and 15
+            const size = Math.random() * 10 + 5;
             particle.style.width = size + 'px';
             particle.style.height = size + 'px';
             particle.style.left = Math.random() * window.innerWidth + 'px';
             particle.style.top = Math.random() * window.innerHeight + 'px';
             
-            // Remove particle after animation duration
             setTimeout(() => {
                 particle.remove();
-            }, 3000); // Remove after 3 seconds
+            }, 3000);
         }
     }
 
-    // Create particles every second
     setInterval(createParticles, 1000);
 </script>
 
