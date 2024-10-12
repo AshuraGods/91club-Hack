@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASHURA SERVER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Share Tech Mono', monospace; /* Use hacker font */
+            background-color: #f0f0f0; /* Light background color */
+            color: black; /* Change text color to black */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            text-transform: uppercase; /* Make all text capital letters */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700; /* Bold weight for the heading */
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            position: relative;
+            z-index: 10;
+        }
+
+        label {
+            margin-top: 10px;
+            display: block;
+            font-weight: 500; /* Medium weight for labels */
+        }
+
+        select, input[type="number"], input[type="text"], button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border 0.3s;
+            font-family: 'Share Tech Mono', monospace; /* Use hacker font */
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 80%;
+            margin: 10px auto;
+        }
+
+        select:hover, input[type="number"]:hover, input[type="text"]:hover, button:hover {
+            border-color: #ffcc00;
+        }
+
+        button {
+            background-color: #ffcc00;
+            color: black;
+            border: none;
+            cursor: pointer;
+            font-weight: 700; /* Bold weight for button text */
+        }
+
+        button:hover {
+            background-color: #e6b800;
+        }
+
+        #loading {
+            display: none;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            max-width: 300px;
+            text-align: left;
+        }
+
+        #numberPrediction {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #ffcc00; /* Color for number predictions */
+        }
+
+        /* Digital Glitch Effect */
+        .glitch-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 255, 0, 0.1);
+            animation: glitch 1s infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, -5px); }
+            40% { transform: translate(5px, 0); }
+            60% { transform: translate(-5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Particle Styles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: #ffcc00;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glitch-effect"></div>
+
+    <h1>ASHURA SERVER</h1>
+
+    <!-- VIP 6-Digit Key Login Form -->
+    <form id="loginForm">
+        <label for="vipKey">Enter VIP 6-Digit Key:</label>
+        <input type="text" id="vipKey" maxlength="6" required placeholder="123456">
+        <button type="submit">Login</button>
+    </form>
+
+    <form id="predictionForm" style="display: none;">
+        <label for="gameSelect">Choose a game:</label>
+        <select id="gameSelect" required>
+            <option value="">--Select a game--</option>
+            <option value="91club">91club</option>
+            <option value="tiranga">Tiranga</option>
+            <option value="tc_lottery">TC Lottery</option>
+            <option value="big_mumbai">Big Mumbai</option>
+            <option value="sikkim99">Sikkim99</option>
+            <option value="duewin">Duewin</option>
+            <option value="goa_games">Goa Games</option>
+            <option value="bdg_win">BDG Win</option>
+            <option value="55club">55club</option>
+            <option value="lotterry7">Lotterry7</option>
+        </select>
+
+        <label for="periodNumber">Enter a 3-digit period number:</label>
+        <input type="number" id="periodNumber" min="100" max="999" required>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <div id="loading">Predicting...</div>
+    <div id="result"></div>
+    <div id="numberPrediction"></div>
+
+    <script>
+        // Handle VIP Key Login
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const vipKey = document.getElementById('vipKey').value;
+            if (vipKey.length === 6 && /^\d+$/.test(vipKey)) {
+                alert("VIP Key Accepted. You may proceed.");
+                document.getElementById('predictionForm').style.display = 'block'; // Show the prediction form
+                document.getElementById('loginForm').style.display = 'none'; // Hide the login form
+            } else {
+                alert("Invalid VIP Key. Please enter a valid 6-digit key.");
+            }
+        });
+
+        // Handle Prediction Form Submission
+        document.getElementById('predictionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const numberPrediction = document.getElementById('numberPrediction');
+            const periodNumber = document.getElementById('periodNumber').value;
+
+            loading.style.display = 'block';
+            result.textContent = '';
+            numberPrediction.textContent = '';
+
+            setTimeout(() => {
+                const prediction = Math.random() < 0.5 ? 'Big' : 'Small';
+                loading.style.display = 'none';
+                result.textContent = `Next Signal ${periodNumber}: ${prediction}`;
+
+                // Set number prediction based on result
+                if (prediction === 'Big') {
+                    numberPrediction.textContent = `Number Predictions: 5, 1, 7, 3, 9`;
+                } else {
+                    numberPrediction.textContent = `Number Predictions: 0, 6, 2, 8, 4`;
+                }
+
+                // Trigger particle burst effect
+                createParticleBurst(event);
+            }, 2000);
+        });
+
+        // Create particle burst effect
+        function createParticleBurst(event) {
+            const particleCount = 30; // Number of particles
+            const burstX = event.clientX; // X position of the click
+            const burstY = event.clientY; // Y position of the click
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 5 + 5; // Random size
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${burstX}px`;
+                particle.style.top = `${burstY}px`;
+                document.body.appendChild(particle);
+
+                // Randomize particle direction and speed
+                const angle = Math.random() * 2 * Math.PI; // Random angle
+                const velocity = Math.random() * 3 + 2; // Random speed
+
+                // Animate particle movement
+                particle.animate([
+                    {
+                        transform: `translate(${Math.cos(angle) * velocity}px, ${Math.sin(angle) * velocity}px)`,
+                        opacity: 1
+                    },
+                    {
+                        transform: 'translate(0, 0)',
+                        opacity: 0
+                    }
+                ], {
+                    duration: 1000,
+                    easing: 'ease-out',
+                    fill: 'forwards'
+                });
+
+                // Remove particle after animation
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
