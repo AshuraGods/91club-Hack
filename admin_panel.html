@@ -8,14 +8,15 @@
     <style>
         body {
             font-family: 'Share Tech Mono', monospace;
-            background-color: #f0f0f0;
-            color: black;
+            background-color: #1e1e1e; /* Dark background */
+            color: #00ff00; /* Green text color */
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
             text-transform: uppercase;
         }
 
@@ -26,10 +27,10 @@
         }
 
         form {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.8); /* Dark form background */
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
             width: 300px;
             margin-bottom: 20px;
         }
@@ -44,12 +45,14 @@
             width: 100%;
             padding: 10px;
             margin: 10px 0;
-            border: 1px solid #ccc;
+            border: 1px solid #00ff00; /* Green border */
             border-radius: 5px;
+            background-color: #1a1a1a; /* Dark input background */
+            color: #00ff00; /* Green text color */
         }
 
         button {
-            background-color: #ffcc00;
+            background-color: #00cc00; /* Green button */
             color: black;
             border: none;
             cursor: pointer;
@@ -57,7 +60,7 @@
         }
 
         button:hover {
-            background-color: #e6b800;
+            background-color: #009900; /* Darker green on hover */
         }
 
         #usersList, #viewUserData {
@@ -65,11 +68,30 @@
             max-width: 300px;
             max-height: 200px;
             overflow-y: auto;
-            border: 1px solid #ccc;
+            border: 1px solid #00ff00; /* Green border */
             padding: 10px;
             border-radius: 5px;
+            background-color: #1a1a1a; /* Dark background for lists */
             display: none;
-            background-color: white;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .delete-btn:hover {
+            background: darkred;
         }
     </style>
 </head>
@@ -92,9 +114,18 @@
             <input type="text" id="username" required placeholder="Enter username">
             <label for="userKey">User Key:</label>
             <input type="text" id="userKey" maxlength="6" required placeholder="Enter 6-digit key">
+            
+            <label for="validity">Select Validity Period:</label>
+            <select id="validity" required>
+                <option value="">--Select Duration--</option>
+                <option value="3">3 Days</option>
+                <option value="15">15 Days</option>
+                <option value="30">30 Days</option>
+            </select>
+            
             <button type="submit">Register User</button>
         </form>
-        
+
         <h3>Registered Users</h3>
         <div id="usersList"></div>
 
@@ -128,10 +159,11 @@
             event.preventDefault();
             const username = document.getElementById('username').value;
             const userKey = document.getElementById('userKey').value;
+            const validity = document.getElementById('validity').value;
 
             // Add user to array
-            users.push({ username, userKey });
-            alert(`User ${username} registered successfully!`);
+            users.push({ username, userKey, validity });
+            alert(`User ${username} registered successfully with a validity of ${validity} days!`);
 
             // Update users list
             updateUsersList();
@@ -144,7 +176,22 @@
         function updateUsersList() {
             const usersList = document.getElementById('usersList');
             usersList.style.display = 'block'; // Show users list
-            usersList.innerHTML = users.map(user => `<div>${user.username} (Key: ${user.userKey})</div>`).join('');
+            usersList.innerHTML = users.map(user => `
+                <div class="user-item">
+                    ${user.username} (Key: ${user.userKey}, Validity: ${user.validity} days)
+                    <button class="delete-btn" onclick="deleteUser('${user.userKey}')">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        // Delete User
+        function deleteUser(userKey) {
+            const index = users.findIndex(user => user.userKey === userKey);
+            if (index !== -1) {
+                users.splice(index, 1); // Remove user from array
+                alert(`User with key ${userKey} deleted successfully!`);
+                updateUsersList(); // Update users list display
+            }
         }
 
         // Handle Viewing User Data by Key
@@ -155,7 +202,7 @@
 
             const viewUserData = document.getElementById('viewUserData');
             if (user) {
-                viewUserData.innerHTML = `Username: ${user.username}<br>User Key: ${user.userKey}`;
+                viewUserData.innerHTML = `Username: ${user.username}<br>User Key: ${user.userKey}<br>Validity: ${user.validity} days`;
             } else {
                 viewUserData.innerHTML = `No user found with key: ${viewKey}`;
             }
