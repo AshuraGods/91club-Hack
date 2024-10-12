@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASHURA SERVER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: #f0f0f0;
+            color: black;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
+
+        h1, h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-top: 10px;
+            display: block;
+            font-weight: 500;
+        }
+
+        select, input[type="number"], input[type="text"], button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #ffcc00;
+            color: black;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        button:hover {
+            background-color: #e6b800;
+        }
+
+        #usersList, #viewUserData {
+            margin-top: 20px;
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ASHURA SERVER</h1>
+
+    <form id="loginForm">
+        <label for="vipKey">Enter VIP 6-Digit Key:</label>
+        <input type="text" id="vipKey" maxlength="6" required placeholder="123456">
+        <button type="submit">Login</button>
+    </form>
+
+    <div id="adminPanel" style="display: none;">
+        <h2>Admin Panel</h2>
+
+        <h3>User Registration</h3>
+        <form id="userRegForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required placeholder="Enter username">
+            <label for="userKey">User Key:</label>
+            <input type="text" id="userKey" maxlength="6" required placeholder="Enter 6-digit key">
+            <button type="submit">Register User</button>
+        </form>
+        
+        <h3>Registered Users</h3>
+        <div id="usersList"></div>
+
+        <h3>View User Data</h3>
+        <form id="keyViewForm">
+            <label for="viewKey">Enter 6-Digit Key:</label>
+            <input type="text" id="viewKey" maxlength="6" required placeholder="123456">
+            <button type="submit">View User Data</button>
+        </form>
+        <div id="viewUserData"></div>
+    </div>
+
+    <script>
+        const users = []; // Array to hold registered users
+
+        // Handle VIP Key Login
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const vipKey = document.getElementById('vipKey').value;
+            if (vipKey.length === 6 && /^\d+$/.test(vipKey)) {
+                alert("VIP Key Accepted. You may proceed.");
+                document.getElementById('adminPanel').style.display = 'block'; // Show admin panel
+                document.getElementById('loginForm').style.display = 'none'; // Hide login form
+            } else {
+                alert("Invalid VIP Key. Please enter a valid 6-digit key.");
+            }
+        });
+
+        // Handle User Registration
+        document.getElementById('userRegForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const userKey = document.getElementById('userKey').value;
+
+            // Add user to array
+            users.push({ username, userKey });
+            alert(`User ${username} registered successfully!`);
+
+            // Update users list
+            updateUsersList();
+
+            // Clear form
+            this.reset();
+        });
+
+        // Update users list display
+        function updateUsersList() {
+            const usersList = document.getElementById('usersList');
+            usersList.style.display = 'block'; // Show users list
+            usersList.innerHTML = users.map(user => `<div>${user.username} (Key: ${user.userKey})</div>`).join('');
+        }
+
+        // Handle Viewing User Data by Key
+        document.getElementById('keyViewForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const viewKey = document.getElementById('viewKey').value;
+            const user = users.find(u => u.userKey === viewKey);
+
+            const viewUserData = document.getElementById('viewUserData');
+            if (user) {
+                viewUserData.innerHTML = `Username: ${user.username}<br>User Key: ${user.userKey}`;
+            } else {
+                viewUserData.innerHTML = `No user found with key: ${viewKey}`;
+            }
+            viewUserData.style.display = 'block'; // Show user data
+        });
+    </script>
+</body>
+</html>
