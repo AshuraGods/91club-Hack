@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASHURA V2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Prevent scroll bars */
+            background: #000; /* Solid black background */
+            color: #00ff00; /* Green text */
+            font-family: 'Roboto Mono', monospace;
+        }
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Behind everything */
+        }
+        .container {
+            position: relative; /* Relative positioning */
+            z-index: 1; /* Above particles */
+            background: transparent; /* No background */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 15px;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px #00ff00; /* Green shadow */
+        }
+        input {
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid #00ff00; /* Green border */
+            background-color: #1a1a1a;
+            color: #00ff00; /* Green text */
+            border-radius: 5px;
+            width: calc(100% - 24px);
+            font-size: 1em;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #00ff00; /* Green button */
+            color: #000000;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            margin-top: 8px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #00cc00; /* Darker green on hover */
+        }
+        .loading {
+            font-size: 1em;
+            margin: 15px 0;
+            display: none;
+        }
+        .result, .colorResult {
+            margin-top: 15px;
+            font-size: 1.2em;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particles-js"></div> <!-- Particle background -->
+    <div class="container">
+        <h1>ASHURA V2</h1>
+
+        <!-- Login Section -->
+        <input type="text" id="usernameInput" placeholder="Username">
+        <input type="password" id="passwordInput" placeholder="Password">
+        <button id="loginButton">Login</button>
+        <div class="loading" id="loginLoadingMessage">Logging in...</div>
+        <div class="result" id="loginResult"></div>
+
+        <!-- Prediction Section -->
+        <div id="predictionSection" style="display: none;">
+            <input type="text" id="periodInput" placeholder="Enter 3-digit period" maxlength="3">
+            <button id="predictButton">Get Prediction</button>
+            <div class="loading" id="loadingMessage">Predicting...</div>
+            <div class="result" id="predictionResult"></div>
+            <div class="colorResult" id="colorResult"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            particles: {
+                number: {
+                    value: 100, // Number of particles
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#00ff00" // Particle color
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000"
+                    },
+                },
+                opacity: {
+                    value: 0.5, // Particle opacity
+                    random: false,
+                    anim: {
+                        enable: false,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 5, // Particle size
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 40,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#00ff00", // Line color
+                    opacity: 0.3, // Line opacity
+                    width: 1 // Line width
+                },
+                move: {
+                    enable: true,
+                    speed: 3, // Movement speed
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 400,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    bubble: {
+                        distance: 400,
+                        size: 40,
+                        duration: 2,
+                        opacity: 8,
+                        speed: 3
+                    },
+                    repulse: {
+                        distance: 200,
+                        duration: 0.4
+                    },
+                    push: {
+                        particles_nb: 4
+                    },
+                    remove: {
+                        particles_nb: 2
+                    }
+                }
+            },
+            retina_detect: true
+        });
+
+        // Login Functionality
+        document.getElementById('loginButton').addEventListener('click', function() {
+            const usernameInput = document.getElementById('usernameInput').value;
+            const passwordInput = document.getElementById('passwordInput').value;
+            const loginLoadingMessage = document.getElementById('loginLoadingMessage');
+            const loginResult = document.getElementById('loginResult');
+
+            loginLoadingMessage.style.display = 'block';
+            loginResult.innerText = '';
+            loginResult.style.opacity = 0;
+
+            setTimeout(() => {
+                loginLoadingMessage.style.display = 'none';
+                if (usernameInput === 'ASHURA' && passwordInput === 'ASHURA V2') {
+                    loginResult.innerText = `Welcome, ${usernameInput}!`;
+                    loginResult.style.opacity = 1;
+                    document.getElementById('predictionSection').style.display = 'block'; // Show prediction section
+                } else {
+                    alert('Invalid username or password.');
+                }
+            }, 2000);
+        });
+
+        // Prediction Functionality
+        document.getElementById('predictButton').addEventListener('click', function() {
+            const periodInput = document.getElementById('periodInput').value;
+            const loadingMessage = document.getElementById('loadingMessage');
+            const predictionResult = document.getElementById('predictionResult');
+            const colorResult = document.getElementById('colorResult');
+            
+            if (periodInput.length === 3) {
+                loadingMessage.style.display = 'block';
+                predictionResult.innerText = '';
+                colorResult.innerText = '';
+                predictionResult.style.opacity = 0;
+                colorResult.style.opacity = 0;
+
+                setTimeout(() => {
+                    loadingMessage.style.display = 'none';
+                    const bigSmall = Math.random() < 0.5 ? 'Big' : 'Small';
+                    const color = Math.random() < 0.5 ? '🟢 Green' : '🔴 Red';
+                    predictionResult.innerText = `Prediction: ${bigSmall}`;
+                    colorResult.innerText = `Color Prediction: ${color}`;
+                    predictionResult.style.opacity = 1;
+                    colorResult.style.opacity = 1;
+                }, 2000);
+            } else {
+                alert('Please enter a valid 3-digit period number.');
+            }
+        });
+    </script>
+
+</body>
+</html>
