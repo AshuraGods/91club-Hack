@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>91CLUB WINGO PREDICTION</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden; /* Prevent scrolling */
+            background-color: black; /* Set the background color to black */
+        }
+        .container {
+            position: relative;
+            z-index: 2; /* Ensure content is above the background */
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            color: #fff; /* White text color */
+        }
+        h1 {
+            font-size: 2.5em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            color: #00FF00; /* Green text for hacker theme */
+        }
+        #inputSection {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center input box */
+        }
+        label {
+            font-size: 1.2em;
+            text-transform: uppercase;
+        }
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1em;
+            width: 80%; /* Set width for the input box */
+            max-width: 300px; /* Max width to keep it centered */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #00FF00; /* Green button */
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #009900; /* Darker green on hover */
+        }
+        .predictions {
+            margin-top: 20px;
+            font-size: 1.5em;
+            text-transform: uppercase;
+        }
+        .countdown {
+            font-size: 1.2em;
+            color: #FF0000; /* Red color for countdown */
+        }
+        #loading {
+            display: none;
+            font-size: 1.5em;
+            color: #00FF00; /* Green color for loading text */
+            margin-top: 20px;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1; /* Place canvas behind the content */
+        }
+    </style>
+    <script>
+        // Particle Effect
+        const particles = [];
+        const numParticles = 100;
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 5 + 1;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+                this.color = 'rgba(0, 255, 0, 0.8)'; // Green color
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                // Bounce off walls
+                if (this.x < 0 || this.x > window.innerWidth) this.speedX *= -1;
+                if (this.y < 0 || this.y > window.innerHeight) this.speedY *= -1;
+            }
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < numParticles; i++) {
+                particles.push(new Particle(Math.random() * window.innerWidth, Math.random() * window.innerHeight));
+            }
+        }
+
+        function animate() {
+            const canvas = document.getElementById('particleCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw(ctx);
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.onload = function() {
+            init();
+            animate();
+            document.getElementById("countdown").style.display = "none";
+        };
+
+        // Prediction Logic
+        let predictions = ["BIG", "SMALL"];
+        let colors = ["GREEN ", "RED "];
+        let periodNumber = 0;
+        let intervalId;
+        let countdownInterval;
+
+        function startPrediction() {
+            const periodInput = document.getElementById("periodInput").value;
+            const period = parseInt(periodInput);
+
+            if (periodInput.length === 3 && !isNaN(period)) {
+                periodNumber = period;
+                document.getElementById("inputSection").style.display = "none";
+                document.getElementById("loading").style.display = "block"; // Show loading
+                setTimeout(() => {
+                    document.body.style.backgroundColor = "black"; // Set black background
+                    updatePredictions();
+                    autoIncrementPeriod();
+                }, 1000); // Simulate loading time
+            } else {
+                alert("Please enter a valid 3-digit number.");
+            }
+        }
+
+        function updatePredictions() {
+            const predictionElement = document.getElementById("predictions");
+            predictionElement.innerHTML = "";
+
+            let bigSmallPrediction = predictions[Math.floor(Math.random() * predictions.length)];
+            let colorPrediction = colors[Math.floor(Math.random() * colors.length)];
+
+            predictionElement.innerHTML = `
+                <div class="predictions">
+                    <p>NEXT SIGNAL: ${bigSmallPrediction}</p>
+                    <p>COLOR : ${colorPrediction}</p>
+                    <p>CURRENT PERIOD: ${periodNumber}</p>
+                </div>
+            `;
+
+            countdown(30);
+            document.getElementById("loading").style.display = "none"; // Hide loading
+        }
+
+        function countdown(seconds) {
+            const countdownElement = document.getElementById("countdown");
+            countdownElement.style.display = "block";
+            countdownElement.innerText = `NEXT UPDATE IN: ${seconds} SECONDS`;
+
+            countdownInterval = setInterval(() => {
+                seconds--;
+                countdownElement.innerText = `NEXT UPDATE IN: ${seconds} SECONDS`;
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    updatePredictions();
+                }
+            }, 1000);
+        }
+
+        function autoIncrementPeriod() {
+            intervalId = setInterval(() => {
+                periodNumber++;
+                document.getElementById("predictions").querySelector('.predictions').querySelector('p:last-child').innerText = `CURRENT PERIOD: ${periodNumber}`;
+            }, 30000); // Increment every 30 seconds
+        }
+    </script>
+</head>
+<body>
+    <canvas id="particleCanvas"></canvas>
+    <div class="container">
+        <h1>91club Wingo Prediction</h1>
+        <div id="inputSection">
+            <label for="periodInput">Enter 3-Digit Period Number:</label>
+            <input type="text" id="periodInput" maxlength="3">
+            <button onclick="startPrediction()">Start</button>
+        </div>
+        <div id="predictions"></div>
+        <h3 id="countdown" class="countdown" style="display: none;"></h3>
+        <div id="loading">Predicting...</div>
+    </div>
+</body>
+</html>
