@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASHURA PAID SERVER</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+            color: #ff0000;
+            background-color: #000; /* Set background color */
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background-color: rgba(34, 34, 34, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(255, 0, 0, 0.5);
+            padding: 20px;
+            border: 2px solid #ff0000;
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            color: #ff0000;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff0000;
+        }
+        input, select {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            background-color: #111;
+            color: #ff0000;
+            font-size: 16px;
+            margin: 0 auto;
+            display: block;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #cc0000;
+        }
+        #loading {
+            text-align: center;
+            color: #ff0000;
+            display: none;
+        }
+        #resultDisplay, #confirmation {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #ff0000;
+        }
+        #loginForm {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ASHURA PAID SERVER</h1>
+
+    <div id="loginForm">
+        <div class="input-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter username">
+        </div>
+        <div class="input-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter password">
+        </div>
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="predictionForm" style="display: none;">
+        <div class="input-group">
+            <label for="gameSelect">Select Game:</label>
+            <select id="gameSelect">
+                <option value="">--Select a Game--</option>
+                <option value="91club">91club</option>
+                <option value="Tiranga">Tiranga</option>
+                <option value="Big Mumbai">Big Mumbai</option>
+                <option value="Goa Games">Goa Games</option>
+                <option value="Bdg Win">Bdg Win</option>
+                <option value="Sikkim 99">Sikkim 99</option>
+                <option value="55Club">55Club</option>
+                <option value="51club">51club</option>
+                <option value="Bharat Club">Bharat Club</option>
+                <option value="Lottery 7">Lottery 7</option>
+                <option value="Tc Lottery">Tc Lottery</option>
+                <option value="82 Lottery">82 Lottery</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="lastResults">Enter Last 3 Digit Period Numbers:</label>
+            <input type="text" id="lastResults" placeholder="e.g., 123,456,789" maxlength="11">
+        </div>
+
+        <button onclick="calculatePrediction()">Calculate Prediction</button>
+
+        <div id="loading">Loading...</div>
+        <div id="resultDisplay"></div>
+        <div id="confirmation" style="display: none;">
+            <button onclick="confirmResult('WIN')">WIN</button>
+            <button onclick="confirmResult('LOSS')">LOSS</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let lastPrediction = '';
+    let lossCount = 0; // Track number of losses
+
+    // Show login form on page load
+    document.getElementById('loginForm').style.display = 'block';
+
+    function login() {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        // Updated authentication check
+        if (username === 'ASHURADAD' && password === 'PAIDUSERS') {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('predictionForm').style.display = 'block';
+        } else {
+            alert('Invalid username or password.');
+        }
+    }
+
+    function calculatePrediction() {
+        const gameSelect = document.getElementById('gameSelect').value;
+        if (!gameSelect) {
+            document.getElementById('resultDisplay').innerText = 'Please select a game before predicting.';
+            return;
+        }
+
+        const lastResults = document.getElementById('lastResults').value.trim();
+        const resultsArray = lastResults.split(',').map(num => num.trim());
+        if (resultsArray.length !== 3 || !resultsArray.every(num => /^\d{3}$/.test(num))) {
+            document.getElementById('resultDisplay').innerText = 'Please enter valid last 3 digit period numbers (e.g., 123,456,789).';
+            return;
+        }
+
+        // Show loading
+        document.getElementById('loading').style.display = 'block';
+        
+        // Simulate loading time
+        setTimeout(() => {
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+
+            // Calculate sum of the last three numbers
+            const sum = resultsArray.reduce((acc, num) => acc + parseInt(num, 10), 0);
+            const average = sum / 3;
+            const prediction = average > 4.5 ? 'BIG' : 'SMALL'; // Adjust based on average
+            
+            // Generate random numbers for display
+            const randomNum1 = Math.floor(Math.random() * 10);
+            const randomNum2 = Math.floor(Math.random() * 10);
+            const randomNum3 = Math.floor(Math.random() * 10);
+
+            // Build the prediction output
+            lastPrediction = `${prediction} (${randomNum1})(${randomNum2})(${randomNum3})`;
+
+            // Display prediction
+            document.getElementById('resultDisplay').innerText = lastPrediction;
+
+            // Show confirmation buttons
+            document.getElementById('confirmation').style.display = 'block';
+        }, 1000); // Simulate loading time
+    }
+
+    function confirmResult(result) {
+        let confirmationMessage = '';
+        if (result === 'WIN') {
+            confirmationMessage = 'Congrats, you won!';
+            lossCount = 0; // Reset loss count on win
+        } else if (result === 'LOSS') {
+            confirmationMessage = 'Oops, you lost!';
+            lossCount++;
+        }
+
+        if (lossCount > 3) {
+            confirmationMessage = 'Don\'t bet for now!';
+            document.getElementById('confirmation').style.display = 'none'; // Hide confirmation buttons
+        }
+
+        document.getElementById('resultDisplay').innerText = confirmationMessage;
+
+        // Optionally, clear input for next prediction
+        if (lossCount <= 3) {
+            document.getElementById('lastResults').value = '';
+            document.getElementById('gameSelect').value = '';
+        }
+    }
+</script>
+
+</body>
+</html>
