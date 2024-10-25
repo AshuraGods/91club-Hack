@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASHURA SERVER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            color: #ff0000;
+            font-family: 'Roboto', sans-serif;
+        }
+        #particle-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.3);
+            pointer-events: none;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+            border: 1px solid #ff0000;
+            border-radius: 10px;
+        }
+        select, input {
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #ff0000;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
+            color: #ff0000;
+            background-color: transparent;
+            text-shadow: 1px 1px 5px rgba(255, 0, 0, 0.7);
+        }
+        button {
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #ff0000;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
+            background-color: #000;
+            color: #ffcc00; /* Yellow text */
+            text-shadow: 1px 1px 5px rgba(255, 204, 0, 0.9); /* Yellow shadow */
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #333; /* Darker background on hover */
+        }
+        h1 {
+            text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.9);
+        }
+        #prediction {
+            margin-top: 20px;
+            font-size: 24px;
+            text-shadow: 1px 1px 5px rgba(255, 0, 0, 0.7);
+        }
+        .hidden {
+            display: none;
+        }
+        #loading {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #ff0000;
+            text-shadow: 1px 1px 3px rgba(255, 0, 0, 0.7);
+        }
+        #history {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ffcc00; /* Yellow text */
+            text-shadow: 1px 1px 5px rgba(255, 204, 0, 0.9);
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ffcc00; /* Yellow border */
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div id="particle-container"></div>
+    <div class="container">
+        <h1>ASHURA SERVER</h1>
+        <div id="gameArea">
+            <select id="gameSelect">
+                <option value="">Select Game</option>
+                <option value="91club">91club</option>
+                <option value="Bdg win">Bdg win</option>
+                <option value="Tiranga">Tiranga</option>
+                <option value="82 Lottery">82 Lottery</option>
+                <option value="55 Club">55 Club</option>
+                <option value="51 Game">51 Game</option>
+                <option value="Goa Games">Goa Games</option>
+                <option value="Big Mumbai">Big Mumbai</option>
+                <option value="Bharat Club">Bharat Club</option>
+                <option value="Ok Win">Ok Win</option>
+            </select>
+            <button id="selectGameBtn">Select Game</button>
+        </div>
+        <div id="vipArea" class="hidden">
+            <input type="text" id="vipKey" placeholder="Enter VIP Key" />
+            <button id="submitKeyBtn">Submit Key</button>
+        </div>
+        <div id="periodArea" class="hidden">
+            <input type="text" id="periodNumber" placeholder="Enter 3-Digit Period Number" maxlength="3" />
+            <button id="getPredictionBtn">Get Prediction</button>
+        </div>
+        <div id="prediction" class="hidden"></div>
+        <div id="loading" class="hidden">Connecting...</div>
+        <div id="history" class="hidden">
+            <h2>Prediction History</h2>
+            <ul id="historyList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const particleContainer = document.getElementById('particle-container');
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.width = Math.random() * 10 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = Math.random() * window.innerHeight + 'px';
+            particleContainer.appendChild(particle);
+
+            const animationDuration = Math.random() * 3 + 2;
+            particle.animate([
+                { transform: `translateY(0)` },
+                { transform: `translateY(-100vh)` }
+            ], {
+                duration: animationDuration * 1000,
+                easing: 'linear',
+                fill: 'forwards'
+            });
+
+            setTimeout(() => {
+                particle.remove();
+            }, animationDuration * 1000);
+        }
+
+        setInterval(createParticle, 300);
+
+        document.getElementById('selectGameBtn').onclick = function() {
+            const game = document.getElementById('gameSelect').value;
+
+            if (game === "") {
+                alert("Please select a game.");
+                return;
+            }
+
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('vipArea').classList.remove('hidden');
+        };
+
+        document.getElementById('submitKeyBtn').onclick = function() {
+            const vipKey = document.getElementById('vipKey').value;
+            document.getElementById('loading').classList.remove('hidden');
+
+            setTimeout(() => {
+                if (vipKey !== "correct-vip-key") {
+                    alert("Invalid VIP Key. Please try again.");
+                    document.getElementById('loading').classList.add('hidden');
+                    return;
+                }
+
+                document.getElementById('vipArea').classList.add('hidden');
+                document.getElementById('periodArea').classList.remove('hidden');
+                document.getElementById('loading').classList.add('hidden');
+            }, 1000); // Simulating network delay
+        };
+
+        document.getElementById('getPredictionBtn').onclick = function() {
+            const periodNumber = document.getElementById('periodNumber').value;
+            document.getElementById('loading').classList.remove('hidden');
+
+            setTimeout(() => {
+                if (periodNumber.length !== 3 || isNaN(periodNumber)) {
+                    alert("Please enter a valid 3-digit period number.");
+                    document.getElementById('loading').classList.add('hidden');
+                    return;
+                }
+
+                const prediction = Math.random() < 0.5 ? "BIG" : "SMALL";
+                document.getElementById('prediction').innerText = `Prediction: ${prediction}`;
+                document.getElementById('prediction').classList.remove('hidden');
+
+                // Add to prediction history
+                const historyList = document.getElementById('historyList');
+                const listItem = document.createElement('li');
+                listItem.innerText = `Period ${periodNumber}: ${prediction}`;
+                historyList.appendChild(listItem);
+                
+                // Show history section
+                document.getElementById('history').classList.remove('hidden');
+
+                document.getElementById('loading').classList.add('hidden');
+            }, 1000); // Simulating network delay
+        };
+    </script>
+</body>
+</html>
