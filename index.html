@@ -85,7 +85,7 @@
             color: #4CAF50;
         }
 
-        #countdown {
+        #loading-text {
             font-size: 18px;
             font-weight: 500;
             letter-spacing: 2px;
@@ -130,16 +130,20 @@
     <div class="ashura-paid-server">
         <h1>ASHURA PAID SERVER</h1>
         
+        <!-- Input Period Number -->
+        <input type="text" id="period-number" maxlength="3" placeholder="Enter 3-digit period" style="font-size: 18px; padding: 10px; margin-bottom: 20px; text-align: center;">
+
         <!-- Start Prediction Button -->
         <button id="start-btn" onclick="startPrediction()">Start Prediction</button>
 
-        <!-- Prediction Section - Hidden initially -->
+        <!-- Loading Text -->
         <div id="loading-text" style="display:none;">Connecting...</div>
+
+        <!-- Prediction Section - Hidden initially -->
         <div id="prediction" class="glowing" style="display:none;">Loading...</div>
         <div id="server-status" style="display:none;">
             SERVER IS CONNECTED <span class="connected">&#x1F7E2;</span> <!-- Green circle emoji for connection -->
         </div>
-        <div id="countdown" style="display:none;">Next Prediction in: 60s</div>
     </div>
 
     <!-- Particle effect container -->
@@ -178,41 +182,29 @@
 
         // Function to start prediction logic
         function startPrediction() {
-            // Hide "Start Prediction" button and show loading text
-            document.getElementById('start-btn').style.display = 'none';
-            document.getElementById('loading-text').style.display = 'block';
+            const periodNumber = document.getElementById('period-number').value;
 
-            // Simulate a delay for "Connecting..."
-            setTimeout(() => {
-                // After delay, hide the loading text and show prediction section
-                document.getElementById('loading-text').style.display = 'none';
-                document.getElementById('prediction').style.display = 'block';
-                document.getElementById('server-status').style.display = 'block';
-                document.getElementById('countdown').style.display = 'block';
+            // Check if the entered period number is valid (3 digits)
+            if (periodNumber.length === 3 && !isNaN(periodNumber)) {
+                // Hide the period input and button, show the loading text
+                document.getElementById('period-number').style.display = 'none';
+                document.getElementById('start-btn').style.display = 'none';
+                document.getElementById('loading-text').style.display = 'block';
 
-                // Start the countdown and prediction logic
-                updatePrediction();
-            }, 2000); // 2 seconds for the "Connecting..."
-        }
+                // Simulate a delay for "Connecting..."
+                setTimeout(() => {
+                    // After delay, hide the loading text and show prediction section
+                    document.getElementById('loading-text').style.display = 'none';
+                    document.getElementById('prediction').style.display = 'block';
+                    document.getElementById('server-status').style.display = 'block';
 
-        // Function to update prediction
-        function updatePrediction() {
-            // Update prediction to "BIG" or "SMALL"
-            const prediction = generatePrediction();
-            document.getElementById('prediction').textContent = prediction;
-
-            // Update countdown to be faster (each "second" now takes 1000ms)
-            let countdown = 60;  // Start countdown at 60
-            const countdownInterval = setInterval(() => {
-                document.getElementById('countdown').textContent = `Next Prediction in: ${countdown}s`;
-                countdown--;
-
-                // If countdown reaches zero, restart the prediction
-                if (countdown < 0) {
-                    clearInterval(countdownInterval);
-                    updatePrediction(); // Update prediction when countdown is over
-                }
-            }, 1000); // Countdown interval remains 1000ms (1 second), but the countdown duration will be quicker now.
+                    // Generate the prediction
+                    const prediction = generatePrediction();
+                    document.getElementById('prediction').textContent = prediction;
+                }, 2000); // 2 seconds for the "Connecting..."
+            } else {
+                alert("Please enter a valid 3-digit period number.");
+            }
         }
     </script>
 </body>
