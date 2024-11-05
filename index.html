@@ -42,7 +42,7 @@
         }
 
         /* Centered Start Prediction Button */
-        #start-btn {
+        #start-btn, #next-btn {
             padding: 12px 30px;
             font-size: 18px;
             color: #fff;
@@ -56,7 +56,7 @@
             width: 250px;
         }
 
-        #start-btn:hover {
+        #start-btn:hover, #next-btn:hover {
             background-color: #45a049;
         }
 
@@ -144,6 +144,9 @@
         <div id="server-status" style="display:none;">
             SERVER IS CONNECTED <span class="connected">&#x1F7E2;</span> <!-- Green circle emoji for connection -->
         </div>
+
+        <!-- Next Prediction Button -->
+        <button id="next-btn" style="display:none;" onclick="nextPrediction()">Next Prediction</button>
     </div>
 
     <!-- Particle effect container -->
@@ -197,6 +200,7 @@
                     document.getElementById('loading-text').style.display = 'none';
                     document.getElementById('prediction').style.display = 'block';
                     document.getElementById('server-status').style.display = 'block';
+                    document.getElementById('next-btn').style.display = 'block';
 
                     // Generate the prediction
                     const prediction = generatePrediction();
@@ -205,6 +209,21 @@
             } else {
                 alert("Please enter a valid 3-digit period number.");
             }
+        }
+
+        // Function to load the next prediction
+        function nextPrediction() {
+            // Simulate loading again
+            document.getElementById('next-btn').style.display = 'none'; // Hide the "Next Prediction" button temporarily
+            document.getElementById('prediction').textContent = "Loading...";
+            
+            // Simulate a delay for "Connecting..."
+            setTimeout(() => {
+                // After delay, show new prediction
+                const prediction = generatePrediction();
+                document.getElementById('prediction').textContent = prediction;
+                document.getElementById('next-btn').style.display = 'block'; // Show the "Next Prediction" button again
+            }, 1500); // 1.5 seconds for the "Loading..." effect
         }
     </script>
 </body>
