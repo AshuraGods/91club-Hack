@@ -201,10 +201,8 @@
             const prediction = generatePrediction();
             document.getElementById('prediction').textContent = prediction;
 
-            // Update countdown to be faster (e.g., 15 seconds countdown)
-            let countdown = 15;  // Change to the desired countdown duration (in seconds)
-            
-            // Set countdown to update every 500 milliseconds (half a second)
+            // Update countdown to be faster (each "second" now takes 1000ms)
+            let countdown = 60;  // Start countdown at 60
             const countdownInterval = setInterval(() => {
                 document.getElementById('countdown').textContent = `Next Prediction in: ${countdown}s`;
                 countdown--;
@@ -214,7 +212,7 @@
                     clearInterval(countdownInterval);
                     updatePrediction(); // Update prediction when countdown is over
                 }
-            }, 500); // Countdown interval is 500ms (half a second)
+            }, 1000); // Countdown interval remains 1000ms (1 second), but the countdown duration will be quicker now.
         }
     </script>
 </body>
