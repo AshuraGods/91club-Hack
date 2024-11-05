@@ -201,18 +201,17 @@
             const prediction = generatePrediction();
             document.getElementById('prediction').textContent = prediction;
 
-            // Update countdown
-            let countdown = 60;
+            // Update countdown to be faster (e.g., 15 seconds countdown)
+            let countdown = 15;  // Change to the desired countdown duration (in seconds)
+            
+            // Set countdown to update every 500 milliseconds (half a second)
             const countdownInterval = setInterval(() => {
                 document.getElementById('countdown').textContent = `Next Prediction in: ${countdown}s`;
                 countdown--;
+
+                // If countdown reaches zero, restart the prediction
                 if (countdown < 0) {
                     clearInterval(countdownInterval);
                     updatePrediction(); // Update prediction when countdown is over
                 }
-            }, 1000); // Countdown updates every second
-        }
-
-    </script>
-</body>
-</html>
+            }, 500); // Countdown interval
